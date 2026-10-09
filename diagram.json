@@ -1,0 +1,48 @@
+{
+  "version": 1,
+  "author": "",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-ds18b20", "id": "temp1", "top": -135, "left": -140, "attrs": {} },
+    { "type": "wokwi-resistor", "id": "r1", "top": -60, "left": -100, "attrs": { "value": "4700" } },
+    { "type": "wokwi-lcd1602", "id": "lcd1", "top": -200, "left": 120, "attrs": { "pins": "i2c" } },
+    { "type": "wokwi-membrane-keypad", "id": "keypad1", "top": 20, "left": 170, "attrs": {} },
+    { "type": "wokwi-led", "id": "led1", "top": 300, "left": -60, "attrs": { "color": "blue" } },
+    { "type": "wokwi-led", "id": "led2", "top": 300, "left": 20, "attrs": { "color": "red" } },
+    { "type": "wokwi-resistor", "id": "r2", "top": 250, "left": -75, "attrs": { "value": "220" } },
+    { "type": "wokwi-resistor", "id": "r3", "top": 250, "left": 5, "attrs": { "value": "220" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+
+    [ "temp1:GND", "esp:GND.1", "black", [] ],
+    [ "temp1:VCC", "esp:3V3", "red", [] ],
+    [ "temp1:DQ", "esp:4", "green", [] ],
+    [ "r1:1", "esp:3V3", "red", [] ],
+    [ "r1:2", "esp:4", "green", [] ],
+
+    [ "lcd1:GND", "esp:GND.1", "black", [] ],
+    [ "lcd1:VCC", "esp:5V", "red", [] ],
+    [ "lcd1:SDA", "esp:21", "blue", [] ],
+    [ "lcd1:SCL", "esp:22", "purple", [] ],
+
+    [ "keypad1:R1", "esp:13", "orange", [] ],
+    [ "keypad1:R2", "esp:14", "orange", [] ],
+    [ "keypad1:R3", "esp:27", "orange", [] ],
+    [ "keypad1:R4", "esp:26", "orange", [] ],
+    [ "keypad1:C1", "esp:25", "gray", [] ],
+    [ "keypad1:C2", "esp:33", "gray", [] ],
+    [ "keypad1:C3", "esp:32", "gray", [] ],
+    [ "keypad1:C4", "esp:23", "gray", [] ],
+
+    [ "esp:18", "r2:1", "blue", [] ],
+    [ "r2:2", "led1:A", "blue", [] ],
+    [ "led1:C", "esp:GND.2", "black", [] ],
+    [ "esp:19", "r3:1", "red", [] ],
+    [ "r3:2", "led2:A", "red", [] ],
+    [ "led2:C", "esp:GND.2", "black", [] ]
+  ],
+  "dependencies": {}
+}
