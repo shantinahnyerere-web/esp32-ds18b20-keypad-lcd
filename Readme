@@ -1,0 +1,60 @@
+# ESP32 Keypad Temperature Monitor
+
+Interrupt-driven ESP32 temperature monitor: DS18B20 + I2C LCD + 4x4 keypad + LEDs, built with ESP-IDF and FreeRTOS.
+
+
+
+**Live simulation:** <https://wokwi.com/projects/477404738874159105>
+
+## What it does
+
+- Continuously shows the ambient temperature on a 16x2 LCD.
+- Press **5**: Blue LED turns on, LCD shows `BLUE LED ON`, then `BLUE LED OFF` after 3 s.
+- Press **D**: Red LED turns on, LCD shows `RED LED ON`, then `RED LED OFF` after 3 s.
+- After each cycle the display returns to live temperature. Sensor readings never stop.
+
+## How it works
+
+```
+keypad column pin --ISR--> task notification --> keypad_task --queue--> ui_task --> LEDs + LCD
+sensor_task --------- shared temperature value ---------------------------^
+```
+
+- **ISR:** minimal. It masks the interrupt and notifies `keypad_task`. No scanning or delays inside.
+- **keypad_task:** debounces, scans the matrix, and sends the key to a FreeRTOS queue.
+- **ui_task:** owns the LCD and LEDs, and reacts to keys from the queue.
+- **sensor_task:** reads the DS18B20 in the background using `vTaskDelay`, so it never blocks.
+
+## Hardware / pin map
+
+| Part | ESP32 pin |
+|---|---|
+| DS18B20 data (4.7 kΩ pull-up to 3V3) | GPIO 4 |
+| LCD I2C (address 0x27) | SDA 21, SCL 22 |
+| Keypad rows R1-R4 | 13, 14, 27, 26 |
+| Keypad columns C1-C4 | 25, 33, 32, 23 |
+| Blue LED (220 Ω) | GPIO 18 |
+| Red LED (220 Ω) | GPIO 19 |
+
+## Build and run
+
+Requirements: VS Code, PlatformIO extension, Wokwi extension.
+
+```bash
+pio run
+```
+
+Then run **Wokwi: Start Simulator** in VS Code. Click the DS18B20 to change the temperature and click keypad keys to test.
+
+## Project structure
+
+```
+src/main.c        application code
+platformio.ini    PlatformIO config (ESP-IDF framework)
+diagram.json      Wokwi circuit
+wokwi.toml        Wokwi firmware paths
+```
+
+## Tools
+
+ESP-IDF, FreeRTOS, PlatformIO, Wokwi
